@@ -67,7 +67,7 @@ export default {
       });
     },
     async processLogin() {
-      const host = "http://localhost:8080";
+      const host = "http://choizz-api1.kro.kr:8080";
       axios
         .post(host + "/auth/login", {
           email: this.email,

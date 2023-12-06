@@ -80,7 +80,7 @@ export default {
   computed: {},
   methods: {
     async logout() {
-      await axios.delete(`http://localhost:8080/auth/logout`);
+      await axios.delete(`http://choizz-api1.kro.kr:8080/auth/logout`);
       await axios.delete(`http://localhost:8083/logout/${this.myUserId}`);
       this.stompClient.disconnect;
       this.$router.push("/");
