@@ -58,7 +58,7 @@ export default {
   },
   methods: {
     async joinUs() {
-      const host = "http://choizz-api1.kro.kr:8080";
+      const host = "https://choizz-chat.r-e.kr";
       axios
         .post(host + "/users", {
           email: this.email,

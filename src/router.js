@@ -32,7 +32,7 @@ const router = createRouter({
   routes,
 });
 
-const url = "http://choizz-api1.kro.kr:8080";
+const url = "https://choizz-chat.r-e.kr";
 router.beforeEach((to, from, next) => {
   if (to.matched.some((record) => record.meta.needAuth)) {
     axios

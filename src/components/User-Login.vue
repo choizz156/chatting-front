@@ -67,7 +67,7 @@ export default {
     },
     async processLogin() {
       const instance = axios.create({
-        baseURL: 'http://13.124.41.88:8080',
+        baseURL: 'https://choizz-chat.r-e.kr',
         withCredentials: true
       });
       instance
