@@ -43,7 +43,6 @@
 
 <script>
 import axios from "axios";
-axios.defaults.withCredentials = true;
 
 export default {
   name: "User-Login",
@@ -67,9 +66,12 @@ export default {
       });
     },
     async processLogin() {
-      const host = "http://choizz-api1.kro.kr:8080";
-      axios
-        .post(host + "/auth/login", {
+      const instance = axios.create({
+        baseURL: 'http://13.124.41.88:8080',
+        withCredentials: true
+      });
+      instance
+        .post("/auth/login", {
           email: this.email,
           password: this.password,
         })
