@@ -77,7 +77,7 @@ export default {
       }
 
       axios
-        .post("http://localhost:8080/chatting-rooms", {
+        .post("https://choizz-chat.r-e.kr/chatting-rooms", {
           name: this.myNickname + "_" + this.receiverNickname,
           hostId: this.myUserId,
           clientId: this.receiverId,
@@ -107,7 +107,7 @@ export default {
 
     async fetchAndDisplayUserChat() {
       axios
-        .get(`http://localhost:8083/messages/${this.roomId}`)
+        .get(`https://choizz-chat.r-e.kr/messages/${this.roomId}`)
         .then((resp) => {
           this.$emit(
             "add-receiver",

@@ -80,8 +80,8 @@ export default {
   computed: {},
   methods: {
     async logout() {
-      await axios.delete(`http://choizz-api1.kro.kr:8080/auth/logout`);
-      await axios.delete(`http://localhost:8083/logout/${this.myUserId}`);
+      await axios.delete(`https://choizz-chat.r-e.kr/auth/logout`);
+      await axios.delete(`https://choizz-chat.r-e.kr/logout/${this.myUserId}`);
       this.stompClient.disconnect;
       this.$router.push("/");
       alert("로그아웃됐습니다.");
@@ -111,7 +111,7 @@ export default {
       const headers = {
         "user-info": this.myUserId,
       };
-      const socket = new SockJS("http://localhost:8083/chat");
+      const socket = new SockJS("https://choizz-chat.r-e.kr/chat");
       this.stompClient = Stomp.over(socket);
       this.stompClient.connect(headers, this.onConnected, this.onError);
     },
@@ -128,7 +128,7 @@ export default {
     },
     onConnected() {
       axios
-        .post("http://localhost:8083/login-users", {
+        .post("https://choizz-chat.r-e.kr/login-users", {
           userId: this.myUserId,
           email: this.myEmail,
           nickname: this.myNickname,

@@ -86,7 +86,7 @@ export default {
           content: messageContent,
         };
 
-        const url = "http://localhost:8083";
+        const url = "https://choizz-chat.r-e.kr";
         axios
           .post(url + "/messages", chatMessage, { timeout: 5000 })
           .then(() => {
