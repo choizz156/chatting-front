@@ -7,20 +7,20 @@
           <h2>Online Users</h2>
           <ul id="connectedUsers">
             <connected-user
-              :my-nickname="myNickname"
-              :my-user-id="myUserId"
-              v-for="(receiver, index) in receivers"
-              :key="receiver.userId"
-              :index="index"
-              :receiver-id="receiver.userId"
-              :receiver-nickname="receiver.nickname"
-              :length="receivers.length"
-              :make-room="true"
-              :is-active="active(receiver.userId)"
-              :is-nr-msg="nrMsg(receiver.userId)"
-              @add-receiver="addMessageEvent"
-              @user-clicked="applyActiveEvent"
-              @read-msg="readMessageEvent"
+                :my-nickname="myNickname"
+                :my-user-id="myUserId"
+                v-for="(receiver, index) in receivers"
+                :key="receiver.userId"
+                :index="index"
+                :receiver-id="receiver.userId"
+                :receiver-nickname="receiver.nickname"
+                :length="receivers.length"
+                :make-room="true"
+                :is-active="active(receiver.userId)"
+                :is-nr-msg="nrMsg(receiver.userId)"
+                @add-receiver="addMessageEvent"
+                @user-clicked="applyActiveEvent"
+                @read-msg="readMessageEvent"
             ></connected-user>
           </ul>
         </div>
@@ -28,22 +28,22 @@
           <div><strong>nickname:</strong> {{ myNickname }}</div>
           <div><strong>email: </strong>{{ myEmail }}</div>
         </div>
-        <hr class="my-2" />
+        <hr class="my-2"/>
         <div>
           <button
-            @click="logout"
-            type="button"
-            class="btn btn-warning btn-outline-primary"
+              @click="logout"
+              type="button"
+              class="btn btn-warning btn-outline-primary"
           >
             logout
           </button>
         </div>
       </div>
       <chat-area
-        :stomp-client="stompClient"
-        :room-id="selectedRoomId"
-        :receiver-id="receiverId"
-        :receiver-nickname="receiverNickname"
+          :stomp-client="stompClient"
+          :room-id="selectedRoomId"
+          :receiver-id="receiverId"
+          :receiver-nickname="receiverNickname"
       ></chat-area>
     </div>
   </div>
@@ -51,7 +51,7 @@
 
 <script>
 import SockJS from "sockjs-client";
-import { Stomp } from "@stomp/stompjs";
+import {Stomp} from "@stomp/stompjs";
 import ConnectedUser from "@/components/chat/Connected-User.vue";
 import ChatArea from "@/components/chat/Chat-Area.vue";
 import axios from "axios";
@@ -60,7 +60,7 @@ axios.defaults.withCredentials = true;
 
 export default {
   name: "Chat-Room",
-  components: { ChatArea, ConnectedUser },
+  components: {ChatArea, ConnectedUser},
   data() {
     return {
       receivers: [],
@@ -123,29 +123,29 @@ export default {
     receiveConnectedUser(payload) {
       let connectedUsers = JSON.parse(payload.body);
       this.receivers = connectedUsers.filter(
-        (user) => user.email !== this.myEmail
+          (user) => user.email !== this.myEmail
       );
     },
     onConnected() {
       axios
-        .post("https://choizz-chat.r-e.kr/login-users", {
-          userId: this.myUserId,
-          email: this.myEmail,
-          nickname: this.myNickname,
-        })
-        .then(() => {
-          this.stompClient.subscribe(
-            `/user/${this.myUserId}/queue/messages`,
-            this.receiveMessage
-          );
-          this.stompClient.subscribe(`/topic/error`, this.receiveErrorMessage);
-          this.stompClient.subscribe(
-            `/topic/public`,
-            this.receiveConnectedUser
-          );
-          this.stompClient.send("/app/connected-users", {}, {});
-        })
-        .catch(() => alert("로그인된 유저를 가지고 오지 못했습니다."));
+          .post("https://choizz-chat.r-e.kr/login-users", {
+            userId: this.myUserId,
+            email: this.myEmail,
+            nickname: this.myNickname,
+          })
+          .then(() => {
+            this.stompClient.subscribe(
+                `/queue/${this.myUserId}/messages`,
+                this.receiveMessage
+            );
+            this.stompClient.subscribe(`/topic/error`, this.receiveErrorMessage);
+            this.stompClient.subscribe(
+                `/topic/public`,
+                this.receiveConnectedUser
+            );
+            this.stompClient.send("/app/connected-users", {}, {});
+          })
+          .catch(() => alert("로그인된 유저를 가지고 오지 못했습니다."));
     },
 
     onError() {
