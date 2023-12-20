@@ -13,6 +13,7 @@
 
 <script>
 import axios from "axios";
+
 axios.defaults.withCredentials = true;
 
 export default {
@@ -66,9 +67,9 @@ export default {
     createRoomIfNotExist() {
       if (this.isRoomMade === true) {
         this.userItemClick();
-        return;
+      } else {
+        this.createChatRoom();
       }
-      this.createChatRoom();
     }
   },
 
