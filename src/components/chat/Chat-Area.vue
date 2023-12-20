@@ -2,9 +2,9 @@
   <div class="chat-area">
     <div ref="chatArea" class="chat-area" id="chat-messages">
       <div
-        v-for="message in chatMessages"
-        :key="message.id"
-        :class="{
+          v-for="message in chatMessages"
+          :key="message.id"
+          :class="{
           message: true,
           sender: message.senderId !== receiverId,
           receiver: message.senderId === receiverId,
@@ -16,19 +16,19 @@
       </div>
     </div>
     <form
-      :class="{ hidden: this.$store.state.showEl.isShow }"
-      @submit.prevent="sendMessage"
-      ref="messageForm"
-      id="messageForm"
-      name="messageForm"
+        :class="{ hidden: this.$store.state.showEl.isShow }"
+        @submit.prevent="sendMessage"
+        ref="messageForm"
+        id="messageForm"
+        name="messageForm"
     >
       <div class="message-input">
         <input
-          v-model="messageInput"
-          autocomplete="off"
-          type="text"
-          id="message"
-          placeholder="Type your message..."
+            v-model="messageInput"
+            autocomplete="off"
+            type="text"
+            id="message"
+            placeholder="Type your message..."
         />
         <button>Send</button>
       </div>
@@ -86,19 +86,27 @@ export default {
           content: messageContent,
         };
 
-        const url = "https://choizz-chat.r-e.kr";
+        try {
+          this.stompClient.send("/app/chat", {}, JSON.stringify(chatMessage))
+        } catch (error) {
+          console.log(error)
+          chatMessage.content = this.failMessage;
+          alert(this.failMessage);
+          return;
+        }
+
+        const url = "http://localhost:8080";
         axios
-          .post(url + "/messages", chatMessage, { timeout: 5000 })
-          .then(() => {
-            this.stompClient.send("/app/chat", {}, JSON.stringify(chatMessage));
-            this.addMessage(chatMessage);
-            this.messageInput = "";
-            this.scrollToBottom();
-          })
-          .catch(() => {
-            chatMessage.content = this.failMessage;
-            alert(this.failMessage);
-          });
+            .post(url + "/messages", chatMessage, {timeout: 5000})
+            .then(() => {
+              this.addMessage(chatMessage);
+              this.messageInput = "";
+              this.scrollToBottom();
+            })
+            .catch(() => {
+              chatMessage.content = this.failMessage;
+              alert(this.failMessage);
+            });
       }
     },
 

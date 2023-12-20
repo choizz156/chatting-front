@@ -81,7 +81,7 @@ export default {
   methods: {
     async logout() {
       await axios.delete(`https://choizz-chat.r-e.kr/auth/logout`);
-      await axios.delete(`https://choizz-chat.r-e.kr/logout/${this.myUserId}`);
+      await axios.delete(`https://choizz-chat.r-e.kr/disconnect/${this.myUserId}`);
       this.stompClient.disconnect;
       this.$router.push("/");
       alert("로그아웃됐습니다.");

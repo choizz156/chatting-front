@@ -1,14 +1,14 @@
 <template>
   <li
-    ref="clickedUser"
-    @click.prevent="createRoomIfNotExist"
-    :class="isSelected"
-    class="user-item"
+      ref="clickedUser"
+      @click.prevent="createRoomIfNotExist"
+      :class="isSelected"
+      class="user-item"
   >
     <span>{{ receiverNickname }}</span>
     <span :class="addNrMsg" class="user-item span"></span>
   </li>
-  <hr class="my-1" />
+  <hr class="my-1"/>
 </template>
 
 <script>
@@ -55,10 +55,10 @@ export default {
 
   computed: {
     isSelected() {
-      return { active: this.isActive };
+      return {active: this.isActive};
     },
     addNrMsg() {
-      return { "nr-msg": this.isNrMsg };
+      return {"nr-msg": this.isNrMsg};
     },
   },
 
@@ -66,17 +66,18 @@ export default {
     createRoomIfNotExist() {
       if (this.isRoomMade === true) {
         this.userItemClick();
-      } else {
-        this.createChatRoom();
-      }
-    },
-
-    createChatRoom() {
-      if (this.isRoomMade) {
         return;
       }
+      this.createChatRoom();
+    }
+  },
 
-      axios
+  createChatRoom() {
+    if (this.isRoomMade) {
+      return;
+    }
+
+    axios
         .post("https://choizz-chat.r-e.kr/chatting-rooms", {
           name: this.myNickname + "_" + this.receiverNickname,
           hostId: this.myUserId,
@@ -94,32 +95,36 @@ export default {
             alert("알 수 없는 오류가 발생했습니다.");
           }
         });
-    },
+  },
 
-    userItemClick() {
-      this.$emit("user-clicked", this.receiverId);
-      this.$emit("read-msg", null);
+  userItemClick() {
+    this.$emit("user-clicked", this.receiverId);
+    this.$emit("read-msg", null);
 
-      this.$store.commit("show", false);
+    this.$store.commit("show", false);
 
-      this.fetchAndDisplayUserChat().then();
-    },
+    this.fetchAndDisplayUserChat().then();
+  },
 
-    async fetchAndDisplayUserChat() {
-      axios
+  async fetchAndDisplayUserChat() {
+    axios
         .get(`https://choizz-chat.r-e.kr/messages/${this.roomId}`)
         .then((resp) => {
           this.$emit(
-            "add-receiver",
-            this.receiverId,
-            this.receiverNickname,
-            this.roomId
+              "add-receiver",
+              this.receiverId,
+              this.receiverNickname,
+              this.roomId
           );
           this.$store.commit("loadMessageList", resp.data);
-        });
-    },
+        }).catch(error => {
+      if (error.response && error.response.status === 400) {
+        this.$router.push("/login");
+        alert("세션이 만료됐습니다.")
+      }
+    });
   },
-};
+}
 </script>
 
 <style scoped>
