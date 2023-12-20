@@ -70,61 +70,58 @@ export default {
       } else {
         this.createChatRoom();
       }
-    }
-  },
-
-  createChatRoom() {
-    if (this.isRoomMade) {
-      return;
-    }
-
-    axios
-        .post("https://choizz-chat.r-e.kr/chatting-rooms", {
-          name: this.myNickname + "_" + this.receiverNickname,
-          hostId: this.myUserId,
-          clientId: this.receiverId,
-        })
-        .then((resp) => {
-          this.isRoomMade = this.makeRoom;
-          this.roomId = resp.data.data.roomId;
-          this.userItemClick();
-        })
-        .catch((error) => {
-          if (error.response && error.response.status === 400) {
-            this.userItemClick();
-          } else {
-            alert("알 수 없는 오류가 발생했습니다.");
-          }
-        });
-  },
-
-  userItemClick() {
-    this.$emit("user-clicked", this.receiverId);
-    this.$emit("read-msg", null);
-
-    this.$store.commit("show", false);
-
-    this.fetchAndDisplayUserChat().then();
-  },
-
-  async fetchAndDisplayUserChat() {
-    axios
-        .get(`https://choizz-chat.r-e.kr/messages/${this.roomId}`)
-        .then((resp) => {
-          this.$emit(
-              "add-receiver",
-              this.receiverId,
-              this.receiverNickname,
-              this.roomId
-          );
-          this.$store.commit("loadMessageList", resp.data);
-        }).catch(error => {
-      if (error.response && error.response.status === 400) {
-        this.$router.push("/login");
-        alert("세션이 만료됐습니다.")
+    },
+    createChatRoom() {
+      if (this.isRoomMade) {
+        return;
       }
-    });
-  },
+      axios
+          .post("https://choizz-chat.r-e.kr/chatting-rooms", {
+            name: this.myNickname + "_" + this.receiverNickname,
+            hostId: this.myUserId,
+            clientId: this.receiverId,
+          })
+          .then((resp) => {
+            this.isRoomMade = this.makeRoom;
+            this.roomId = resp.data.data.roomId;
+            this.userItemClick();
+          })
+          .catch((error) => {
+            if (error.response && error.response.status === 400) {
+              this.userItemClick();
+            } else {
+              alert("알 수 없는 오류가 발생했습니다.");
+            }
+          });
+    },
+    userItemClick() {
+      this.$emit("user-clicked", this.receiverId);
+      this.$emit("read-msg", null);
+
+      this.$store.commit("show", false);
+
+      this.fetchAndDisplayUserChat().then();
+    },
+
+    async fetchAndDisplayUserChat() {
+      axios
+          .get(`https://choizz-chat.r-e.kr/messages/${this.roomId}`)
+          .then((resp) => {
+            this.$emit(
+                "add-receiver",
+                this.receiverId,
+                this.receiverNickname,
+                this.roomId
+            );
+            this.$store.commit("loadMessageList", resp.data);
+          }).catch(error => {
+        if (error.response && error.response.status === 400) {
+          this.$router.push("/login");
+          alert("세션이 만료됐습니다.")
+        }
+      });
+    },
+  }
 }
 </script>
 
