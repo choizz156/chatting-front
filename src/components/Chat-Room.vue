@@ -81,7 +81,6 @@ export default {
   methods: {
     async logout() {
       await axios.delete(`https://choizz-chat.r-e.kr/auth/logout`);
-      await axios.delete(`https://choizz-chat.r-e.kr/disconnect/${this.myUserId}`);
       this.stompClient.disconnect;
       this.$router.push("/");
       alert("로그아웃됐습니다.");
@@ -128,25 +127,16 @@ export default {
       );
     },
     onConnected() {
-      axios
-          .post("https://choizz-chat.r-e.kr/login-users", {
-            userId: this.myUserId,
-            email: this.myEmail,
-            nickname: this.myNickname,
-          })
-          .then(() => {
-            this.stompClient.subscribe(
-                `/queue/${this.myUserId}/messages`,
-                this.receiveMessage
-            );
-            this.stompClient.subscribe(`/topic/${this.myUserId}/error`, this.receiveErrorMessage);
-            this.stompClient.subscribe(
-                `/topic/public`,
-                this.receiveConnectedUser
-            );
-            this.stompClient.send("/app/connected-users", {}, {});
-          })
-          .catch(() => alert("로그인된 유저를 가지고 오지 못했습니다."));
+      this.stompClient.subscribe(
+          `/queue/${this.myUserId}/messages`,
+          this.receiveMessage
+      );
+      this.stompClient.subscribe(`/topic/${this.myUserId}/error`, this.receiveErrorMessage);
+      this.stompClient.subscribe(`/topic/error`, this.receiveErrorMessage);
+      this.stompClient.subscribe(
+          `/topic/public`,
+          this.receiveConnectedUser
+      );
     },
 
     onError() {

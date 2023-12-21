@@ -39,6 +39,8 @@
 <script>
 import axios from "axios";
 
+axios.defaults.withCredentials = true;
+
 export default {
   props: ["stompClient", "receiverId", "receiverNickname", "roomId"],
   data() {
@@ -74,6 +76,11 @@ export default {
     },
   },
   methods: {
+    pushMessage(chatMessage) {
+      this.addMessage(chatMessage);
+      this.messageInput = "";
+      this.scrollToBottom();
+    },
     sendMessage() {
       const messageContent = this.messageInput;
       if (messageContent && this.stompClient) {
@@ -99,31 +106,25 @@ export default {
               alert(this.failMessage);
             });
       }
-    }
-  },
+    },
 
-  addMessage(payload) {
-    this.chatMessages.push(payload);
-  },
+    addMessage(payload) {
+      this.chatMessages.push(payload);
+    },
 
-  scrollToBottom() {
-    this.$refs.chatArea.scrollTop = this.$refs.chatArea.scrollHeight;
+    scrollToBottom() {
+      this.$refs.chatArea.scrollTop = this.$refs.chatArea.scrollHeight;
+    },
+  }
+  ,
+  updated() {
+    this.scrollToBottom();
   },
-}
-,
-updated()
-{
-  this.scrollToBottom();
-}
-,
-mounted()
-{
-  this.messageForm = this.$refs.messageForm;
-  this.chatArea = this.$refs.chatArea;
-}
-,
-}
-;
+  mounted() {
+    this.messageForm = this.$refs.messageForm;
+    this.chatArea = this.$refs.chatArea;
+  },
+};
 </script>
 
 <style scoped>
