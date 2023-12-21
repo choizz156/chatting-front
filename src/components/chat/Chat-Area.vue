@@ -86,46 +86,44 @@ export default {
           content: messageContent,
         };
 
-        try {
-          this.stompClient.send("/app/chat", {}, JSON.stringify(chatMessage))
-        } catch (error) {
-          console.log(error)
-          chatMessage.content = this.failMessage;
-          alert(this.failMessage);
-          return;
-        }
-
         const url = "https://choizz-chat.r-e.kr";
         axios
             .post(url + "/messages", chatMessage, {timeout: 5000})
-            .then(() => {
-              this.addMessage(chatMessage);
-              this.messageInput = "";
-              this.scrollToBottom();
+            .then((resp) => {
+              this.pushMessage(chatMessage);
+              chatMessage.id = resp.data.data;
+              this.stompClient.send("/app/chat", {}, JSON.stringify(chatMessage))
             })
             .catch(() => {
               chatMessage.content = this.failMessage;
               alert(this.failMessage);
             });
       }
-    },
+    }
+  },
 
-    addMessage(payload) {
-      this.chatMessages.push(payload);
-    },
+  addMessage(payload) {
+    this.chatMessages.push(payload);
+  },
 
-    scrollToBottom() {
-      this.$refs.chatArea.scrollTop = this.$refs.chatArea.scrollHeight;
-    },
+  scrollToBottom() {
+    this.$refs.chatArea.scrollTop = this.$refs.chatArea.scrollHeight;
   },
-  updated() {
-    this.scrollToBottom();
-  },
-  mounted() {
-    this.messageForm = this.$refs.messageForm;
-    this.chatArea = this.$refs.chatArea;
-  },
-};
+}
+,
+updated()
+{
+  this.scrollToBottom();
+}
+,
+mounted()
+{
+  this.messageForm = this.$refs.messageForm;
+  this.chatArea = this.$refs.chatArea;
+}
+,
+}
+;
 </script>
 
 <style scoped>

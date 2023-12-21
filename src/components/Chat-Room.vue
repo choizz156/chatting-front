@@ -118,6 +118,7 @@ export default {
 
     receiveErrorMessage() {
       alert("통신 오류가 발생했습니다.");
+      this.$router.push("/login");
     },
 
     receiveConnectedUser(payload) {
@@ -138,7 +139,7 @@ export default {
                 `/queue/${this.myUserId}/messages`,
                 this.receiveMessage
             );
-            this.stompClient.subscribe(`/topic/error`, this.receiveErrorMessage);
+            this.stompClient.subscribe(`/topic/${this.myUserId}/error`, this.receiveErrorMessage);
             this.stompClient.subscribe(
                 `/topic/public`,
                 this.receiveConnectedUser
