@@ -7,20 +7,20 @@
           <h2>Online Users</h2>
           <ul id="connectedUsers">
             <connected-user
-                :my-nickname="myNickname"
-                :my-user-id="myUserId"
-                v-for="(receiver, index) in receivers"
-                :key="receiver.userId"
-                :index="index"
-                :receiver-id="receiver.userId"
-                :receiver-nickname="receiver.nickname"
-                :length="receivers.length"
-                :make-room="true"
-                :is-active="active(receiver.userId)"
-                :is-nr-msg="nrMsg(receiver.userId)"
-                @add-receiver="addMessageEvent"
-                @user-clicked="applyActiveEvent"
-                @read-msg="readMessageEvent"
+              :my-nickname="myNickname"
+              :my-user-id="myUserId"
+              v-for="(receiver, index) in receivers"
+              :key="receiver.userId"
+              :index="index"
+              :receiver-id="receiver.userId"
+              :receiver-nickname="receiver.nickname"
+              :length="receivers.length"
+              :make-room="true"
+              :is-active="active(receiver.userId)"
+              :is-nr-msg="nrMsg(receiver.userId)"
+              @add-receiver="addMessageEvent"
+              @user-clicked="applyActiveEvent"
+              @read-msg="readMessageEvent"
             ></connected-user>
           </ul>
         </div>
@@ -28,39 +28,39 @@
           <div><strong>nickname:</strong> {{ myNickname }}</div>
           <div><strong>email: </strong>{{ myEmail }}</div>
         </div>
-        <hr class="my-2"/>
+        <hr class="my-2" />
         <div>
           <button
-              @click="logout"
-              type="button"
-              class="btn btn-warning btn-outline-primary"
+            @click="logout"
+            type="button"
+            class="btn btn-warning btn-outline-primary"
           >
             logout
           </button>
         </div>
       </div>
       <chat-area
-          :stomp-client="stompClient"
-          :room-id="selectedRoomId"
-          :receiver-id="receiverId"
-          :receiver-nickname="receiverNickname"
+        :stomp-client="stompClient"
+        :room-id="selectedRoomId"
+        :receiver-id="receiverId"
+        :receiver-nickname="receiverNickname"
       ></chat-area>
     </div>
   </div>
 </template>
 
 <script>
-import SockJS from "sockjs-client";
-import {Stomp} from "@stomp/stompjs";
-import ConnectedUser from "@/components/chat/Connected-User.vue";
-import ChatArea from "@/components/chat/Chat-Area.vue";
-import axios from "axios";
+import SockJS from 'sockjs-client';
+import { Stomp } from '@stomp/stompjs';
+import ConnectedUser from '@/components/chat/Connected-User.vue';
+import ChatArea from '@/components/chat/Chat-Area.vue';
+import axios from 'axios';
 
 axios.defaults.withCredentials = true;
 
 export default {
-  name: "Chat-Room",
-  components: {ChatArea, ConnectedUser},
+  name: 'Chat-Room',
+  components: { ChatArea, ConnectedUser },
   data() {
     return {
       receivers: [],
@@ -73,17 +73,18 @@ export default {
       chatArea: null,
       stompClient: null,
       receiverId: null,
-      receiverNickname: "",
+      receiverNickname: '',
       sendingUserId: null,
     };
   },
   computed: {},
   methods: {
     async logout() {
-      await axios.delete(`https://choizz-chat.r-e.kr/auth/logout`);
+      const host = 'https://choizz-chat.r-e.kr';
+      await axios.delete(host + '/auth/logout');
       this.stompClient.disconnect;
-      this.$router.push("/");
-      alert("로그아웃됐습니다.");
+      this.$router.push('/');
+      alert('로그아웃됐습니다.');
     },
     nrMsg(receiverUserId) {
       return this.sendingUserId === receiverUserId;
@@ -108,46 +109,46 @@ export default {
 
     connectWebSocket() {
       const headers = {
-        "user-info": this.myUserId,
+        'user-info': this.myUserId,
       };
-      const socket = new SockJS("https://choizz-chat.r-e.kr/chat");
+      const socket = new SockJS('https://choizz-chat.r-e.kr/chat');
       this.stompClient = Stomp.over(socket);
       this.stompClient.connect(headers, this.onConnected, this.onError);
     },
 
     receiveErrorMessage() {
-      alert("통신 오류가 발생했습니다.");
-      this.$router.push("/login");
+      alert('통신 오류가 발생했습니다.');
+      this.$router.push('/login');
     },
 
     receiveConnectedUser(payload) {
       let connectedUsers = JSON.parse(payload.body);
       this.receivers = connectedUsers.filter(
-          (user) => user.email !== this.myEmail
+        (user) => user.email !== this.myEmail
       );
     },
     onConnected() {
       this.stompClient.subscribe(
-          `/queue/${this.myUserId}/messages`,
-          this.receiveMessage
+        `/queue/${this.myUserId}/messages`,
+        this.receiveMessage
       );
-      this.stompClient.subscribe(`/topic/${this.myUserId}/error`, this.receiveErrorMessage);
-      this.stompClient.subscribe(`/topic/error`, this.receiveErrorMessage);
       this.stompClient.subscribe(
-          `/topic/public`,
-          this.receiveConnectedUser
+        `/topic/${this.myUserId}/error`,
+        this.receiveErrorMessage
       );
+      this.stompClient.subscribe(`/topic/error`, this.receiveErrorMessage);
+      this.stompClient.subscribe(`/topic/public`, this.receiveConnectedUser);
     },
 
     onError() {
-      alert("소켓 연결 실패");
+      alert('소켓 연결 실패');
     },
 
     async receiveMessage(payload) {
       // await this.connectUsers();
       const message = JSON.parse(payload.body);
       if (this.selectedRoomId === message.roomId) {
-        this.$store.commit("addMessage", message);
+        this.$store.commit('addMessage', message);
         return;
       }
       this.sendingUserId = message.senderId;
@@ -161,7 +162,7 @@ export default {
       nickname: this.myNickname,
       userId: this.myUserId,
     };
-    this.$store.commit("setUser", userInfo);
+    this.$store.commit('setUser', userInfo);
 
     // this.connectUsers();
   },
@@ -170,7 +171,7 @@ export default {
 
 <style>
 body {
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   margin: 0;
   padding: 0;
   background-color: #f0f0f0;
