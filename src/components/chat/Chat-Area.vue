@@ -2,9 +2,9 @@
   <div class="chat-area">
     <div ref="chatArea" class="chat-area" id="chat-messages">
       <div
-          v-for="message in chatMessages"
-          :key="message.id"
-          :class="{
+        v-for="message in chatMessages"
+        :key="message.id"
+        :class="{
           message: true,
           sender: message.senderId !== receiverId,
           receiver: message.senderId === receiverId,
@@ -16,19 +16,19 @@
       </div>
     </div>
     <form
-        :class="{ hidden: this.$store.state.showEl.isShow }"
-        @submit.prevent="sendMessage"
-        ref="messageForm"
-        id="messageForm"
-        name="messageForm"
+      :class="{ hidden: this.$store.state.showEl.isShow }"
+      @submit.prevent="sendMessage"
+      ref="messageForm"
+      id="messageForm"
+      name="messageForm"
     >
       <div class="message-input">
         <input
-            v-model="messageInput"
-            autocomplete="off"
-            type="text"
-            id="message"
-            placeholder="Type your message..."
+          v-model="messageInput"
+          autocomplete="off"
+          type="text"
+          id="message"
+          placeholder="Type your message..."
         />
         <button>Send</button>
       </div>
@@ -37,21 +37,21 @@
 </template>
 
 <script>
-import axios from "axios";
+import axios from 'axios';
 
 axios.defaults.withCredentials = true;
 
 export default {
-  props: ["stompClient", "receiverId", "receiverNickname", "roomId"],
+  props: ['stompClient', 'receiverId', 'receiverNickname', 'roomId'],
   data() {
     return {
       messageForm: null,
-      messageInput: "",
+      messageInput: '',
       chatArea: null,
       chatMessages: [],
       senderId: null,
-      senderNickname: "",
-      failMessage: "전송 실패",
+      senderNickname: '',
+      failMessage: '전송 실패',
     };
   },
   computed: {
@@ -78,7 +78,7 @@ export default {
   methods: {
     pushMessage(chatMessage) {
       this.addMessage(chatMessage);
-      this.messageInput = "";
+      this.messageInput = '';
       this.scrollToBottom();
     },
     sendMessage() {
@@ -93,18 +93,8 @@ export default {
           content: messageContent,
         };
 
-        const url = "https://choizz-chat.r-e.kr";
-        axios
-            .post(url + "/messages", chatMessage, {timeout: 5000})
-            .then((resp) => {
-              this.pushMessage(chatMessage);
-              chatMessage.id = resp.data.data;
-              this.stompClient.send("/app/chat", {}, JSON.stringify(chatMessage))
-            })
-            .catch(() => {
-              chatMessage.content = this.failMessage;
-              alert(this.failMessage);
-            });
+        this.stompClient.send('/app/chat', {}, JSON.stringify(chatMessage));
+        this.pushMessage(chatMessage);
       }
     },
 
@@ -115,8 +105,7 @@ export default {
     scrollToBottom() {
       this.$refs.chatArea.scrollTop = this.$refs.chatArea.scrollHeight;
     },
-  }
-  ,
+  },
   updated() {
     this.scrollToBottom();
   },
