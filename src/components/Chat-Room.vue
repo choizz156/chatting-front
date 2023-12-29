@@ -145,7 +145,6 @@ export default {
     },
 
     async receiveMessage(payload) {
-      // await this.connectUsers();
       const message = JSON.parse(payload.body);
       if (this.selectedRoomId === message.roomId) {
         this.$store.commit('addMessage', message);
